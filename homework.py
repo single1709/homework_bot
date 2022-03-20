@@ -87,8 +87,8 @@ def check_response(response):
             LAST_ERROR_MESSAGE_RESPONSE = message
             send_message(BOT, message)
         raise TypeError(message)
-    if (response.get('homeworks') is None
-            or response.get('current_date') is None):
+    if (not('homeworks' in response)
+            or not('current_date' in response)):
         message = 'В ответе нет необходимых ключей'
         logger.error(message)
         if LAST_ERROR_MESSAGE_RESPONSE != message:
