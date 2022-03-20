@@ -170,7 +170,7 @@ def main():
                 logger.debug(message)
             else:
                 message = parse_status(homeworks[0])
-            send_message(BOT, message)
+                send_message(BOT, message)
             current_timestamp = response['current_date']
             time.sleep(RETRY_TIME)
 
