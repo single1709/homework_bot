@@ -164,7 +164,7 @@ def main():
             homeworks = check_response(response)
             current_timestamp = response['current_date']
             time.sleep(RETRY_TIME)
-
+            print(homeworks)
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             logger.error(message)
