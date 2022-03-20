@@ -87,8 +87,8 @@ def check_response(response):
             LAST_ERROR_MESSAGE_RESPONSE = message
             send_message(BOT, message)
         raise TypeError(message)
-    if (not('homeworks' in response)
-            or not('current_date' in response)):
+    if (not ('homeworks' in response)
+            or not ('current_date' in response)):
         message = 'В ответе нет необходимых ключей'
         logger.error(message)
         if LAST_ERROR_MESSAGE_RESPONSE != message:
@@ -113,30 +113,25 @@ def parse_status(homework):
     """
     LAST_ERROR_MESSAGE_STATUS = ''
 
+    homework_name = homework.get('homework_name')
+    homework_status = homework.get('status')
+
     try:
-        homework_name = homework.get('homework_name')
-        homework_status = homework.get('status')
+        verdict = HOMEWORK_STATUSES[homework_status]
     except Exception:
-        message = 'Отсутствуют в ответе новые статусы'
-        logger.debug(message)
+        message = 'Недокументированный статус домашней работы'
+        logger.error(message)
+        if LAST_ERROR_MESSAGE_STATUS != message:
+            LAST_ERROR_MESSAGE_STATUS = message
+            send_message(BOT, message)
         raise KeyError(message)
     else:
-        try:
-            verdict = HOMEWORK_STATUSES[homework_status]
-        except Exception:
-            message = 'Недокументированный статус домашней работы'
-            logger.error(message)
-            if LAST_ERROR_MESSAGE_STATUS != message:
-                LAST_ERROR_MESSAGE_STATUS = message
-                send_message(BOT, message)
-            raise KeyError(message)
+        if verdict == 'approved':
+            message = 'Работа проверена: ревьюеру всё понравилось. Ура!'
+            return message
         else:
-            if verdict == 'approved':
-                message = 'Работа проверена: ревьюеру всё понравилось. Ура!'
-                return message
-            else:
-                message = 'Изменился статус проверки работы'
-                return f'{message} "{homework_name}". {verdict}'
+            message = 'Изменился статус проверки работы'
+            return f'{message} "{homework_name}". {verdict}'
 
 
 def check_tokens():
@@ -162,15 +157,22 @@ def main():
         try:
             response = get_api_answer(current_timestamp)
             homeworks = check_response(response)
-            current_timestamp = response['current_date']
-            time.sleep(RETRY_TIME)
-            print(homeworks)
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             logger.error(message)
             if LAST_ERROR_MESSAGE != message:
                 LAST_ERROR_MESSAGE = message
                 send_message(BOT, message)
+            time.sleep(RETRY_TIME)
+        else:
+            if not homeworks:
+                message = 'Отсутствуют в ответе новые статусы'
+                logger.debug(message)
+                raise AssertionError(message)
+            else:
+                message = parse_status(homeworks[0])
+                send_message(BOT, message)
+            current_timestamp = response['current_date']
             time.sleep(RETRY_TIME)
 
 
