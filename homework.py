@@ -52,7 +52,7 @@ def send_message(bot, message):
 
 
 def get_api_answer(current_timestamp):
-    """Получает ответ от API сервиса Практикум.Домашка"""
+    """Получает ответ от API сервиса Практикум.Домашка."""
     LAST_ERROR_MESSAGE_API = ''
 
     timestamp = current_timestamp or int(time.time())
@@ -106,8 +106,7 @@ def check_response(response):
 
 
 def parse_status(homework):
-    """
-    Извлекает из информации о конкретной
+    """Извлекает из информации о конкретной
     домашней работе статус этой работы.
     """
     LAST_ERROR_MESSAGE_STATUS = ''
@@ -131,9 +130,11 @@ def parse_status(homework):
             raise KeyError(message)
         else:
             if verdict == 'approved':
-                return 'Работа проверена: ревьюеру всё понравилось. Ура!'
+                message = 'Работа проверена: ревьюеру всё понравилось. Ура!'
+                return message
             else:
-                return f'Изменился статус проверки работы "{homework_name}". {verdict}'
+                message = 'Изменился статус проверки работы'
+                return f'{message} "{homework_name}". {verdict}'
 
 
 def check_tokens():
@@ -142,9 +143,9 @@ def check_tokens():
 
 
 def main():
+    """Обращается к API сервиса Практикум.Домашка и
+    узнает статус домашней работы.
     """
-    Обращается к API сервиса Практикум.Домашка и
-    узнает статус домашней работы."""
     LAST_ERROR_MESSAGE = ''
 
     if not check_tokens():
