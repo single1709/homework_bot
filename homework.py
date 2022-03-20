@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
-TELEGRAM_TOKEN = os.getenv('TOKEN')
+TELEGRAM_TOKEN = '5246909891:AAGJ3YOJffZqDoV7x6jDNA6Fk04jRXPpe8Y'
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
 RETRY_TIME = 600
