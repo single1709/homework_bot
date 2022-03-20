@@ -162,10 +162,9 @@ def main():
         try:
             response = get_api_answer(current_timestamp)
             homeworks = check_response(response)
-            for homework in homeworks:
-                message = parse_status(homework)
-                send_message(BOT, message)
-                #current_timestamp = response['current_date']
+            message = parse_status(homeworks[0])
+            send_message(BOT, message)
+            current_timestamp = response['current_date']
             time.sleep(RETRY_TIME)
 
         except Exception as error:
