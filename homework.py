@@ -165,7 +165,7 @@ def main():
             for homework in homeworks:
                 message = parse_status(homework)
                 send_message(BOT, message)
-            current_timestamp = response['current_date']
+                current_timestamp = response['current_date']
             time.sleep(RETRY_TIME)
 
         except Exception as error:
