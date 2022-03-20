@@ -11,8 +11,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
-TELEGRAM_TOKEN = '5246909891:AAGJ3YOJffZqDoV7x6jDNA6Fk04jRXPpe8Y'
-TELEGRAM_CHAT_ID = '187007548'
+TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
+TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
 RETRY_TIME = 600
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
