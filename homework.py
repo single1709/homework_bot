@@ -102,7 +102,7 @@ def check_response(response):
             LAST_ERROR_MESSAGE_RESPONSE = message
             send_message(BOT, message)
         raise TypeError(message)
-    return response.get('homeworks')
+    return response.get('homeworks')[0]
 
 
 def parse_status(homework):
@@ -161,7 +161,7 @@ def main():
     while True:
         try:
             response = get_api_answer(current_timestamp)
-            homework = check_response(response)[0]
+            homework = check_response(response)
             message = parse_status(homework)
             send_message(BOT, message)
             current_timestamp = response['current_date']
