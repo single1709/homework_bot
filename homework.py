@@ -44,7 +44,6 @@ BOT = telegram.Bot(token=TELEGRAM_TOKEN)
 
 def send_message(bot, message):
     """Отправка сообщения в телеграмм"""
-
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logger.info('Сообщение отправлено')
@@ -54,7 +53,6 @@ def send_message(bot, message):
 
 def get_api_answer(current_timestamp):
     """Получает ответ от API сервиса Практикум.Домашка"""
-
     LAST_ERROR_MESSAGE_API = ''
 
     timestamp = current_timestamp or int(time.time())
@@ -141,8 +139,7 @@ def check_tokens():
 
 
 def main():
-    """Обращается к API сервиса Практикум.Домашка
-     и узнает статус домашней работы"""
+    """Обращается к API сервиса Практикум.Домашка и узнает статус домашней работы"""
     LAST_ERROR_MESSAGE = ''
 
     if not check_tokens():
