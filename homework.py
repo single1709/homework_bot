@@ -43,7 +43,7 @@ BOT = telegram.Bot(token=TELEGRAM_TOKEN)
 
 
 def send_message(bot, message):
-    """Отправка сообщения в телеграмм"""
+    """Отправка сообщения в телеграмм."""
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logger.info('Сообщение отправлено')
@@ -77,7 +77,7 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
-    """Проверяет ответ API на корректность"""
+    """Проверяет ответ API на корректность."""
     LAST_ERROR_MESSAGE_RESPONSE = ''
 
     if not isinstance(response, dict):
@@ -87,7 +87,8 @@ def check_response(response):
             LAST_ERROR_MESSAGE_RESPONSE = message
             send_message(BOT, message)
         raise TypeError(message)
-    if response.get('homeworks') is None or response.get('current_date' is None):
+    if response.get('homeworks') is None or\
+            response.get('current_date') is None:
         message = 'В ответе нет необходимых ключей'
         logger.error(message)
         if LAST_ERROR_MESSAGE_RESPONSE != message:
@@ -105,8 +106,10 @@ def check_response(response):
 
 
 def parse_status(homework):
-    """Извлекает из информации о конкретной
-     домашней работе статус этой работы"""
+    """
+    Извлекает из информации о конкретной
+    домашней работе статус этой работы.
+    """
     LAST_ERROR_MESSAGE_STATUS = ''
 
     try:
@@ -134,12 +137,14 @@ def parse_status(homework):
 
 
 def check_tokens():
-    """Проверяет доступность переменных окружения"""
+    """Проверяет доступность переменных окружения."""
     return all([PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID])
 
 
 def main():
-    """Обращается к API сервиса Практикум.Домашка и узнает статус домашней работы"""
+    """
+    Обращается к API сервиса Практикум.Домашка и
+    узнает статус домашней работы."""
     LAST_ERROR_MESSAGE = ''
 
     if not check_tokens():
