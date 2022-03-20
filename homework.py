@@ -162,8 +162,6 @@ def main():
         try:
             response = get_api_answer(current_timestamp)
             homeworks = check_response(response)
-            message = parse_status(homeworks[0])
-            send_message(BOT, message)
             current_timestamp = response['current_date']
             time.sleep(RETRY_TIME)
 
