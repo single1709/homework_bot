@@ -1,11 +1,11 @@
 import os
 import sys
-import requests
 import time
 import logging
-import telegram
-
 from http import HTTPStatus
+
+import telegram
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -168,10 +168,9 @@ def main():
             if not homeworks:
                 message = 'Отсутствуют в ответе новые статусы'
                 logger.debug(message)
-                raise AssertionError(message)
             else:
                 message = parse_status(homeworks[0])
-                send_message(BOT, message)
+            send_message(BOT, message)
             current_timestamp = response['current_date']
             time.sleep(RETRY_TIME)
 
