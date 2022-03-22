@@ -27,11 +27,13 @@ HOMEWORK_CHECK_RESULTS = {
 
 class NoMessageError(Exception):
     """Отправка исключений в лог."""
+
     pass
 
 
 class WithMessageError(Exception):
     """Отправка исключений в лог и в чат."""
+
     pass
 
 
@@ -55,8 +57,8 @@ def check_response(response):
     """Проверяет ответ API на корректность."""
     if not isinstance(response, dict):
         raise TypeError()
-    if (response.get('homeworks') is None or
-       response.get('current_date') is None):
+    if (response.get('homeworks') is None
+       or response.get('current_date') is None):
         raise WithMessageError()
     if not isinstance(response.get('homeworks'), list):
         raise WithMessageError()
@@ -87,7 +89,8 @@ def check_tokens():
     return all([PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID])
 
 
-def check_need_ssend_message(message, last_error_message, bot):
+def check_need_send_message(message, last_error_message, bot):
+    """Проверяет нужно ли отправлять сообщение об ошибке."""
     if last_error_message != message:
         last_error_message = message
         send_message(bot, message)
@@ -125,11 +128,19 @@ def main():
             message = 'Ошибка доступа к данным'
             logger.error(message)
             send_message(bot, message)
-            last_error_message = check_need_ssend_message(message, last_error_message, bot)
+            last_error_message = check_need_send_message(
+                message,
+                last_error_message,
+                bot
+            )
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             logger.error(message)
-            last_error_message = check_need_ssend_message(message, last_error_message, bot)
+            last_error_message = check_need_send_message(
+                message,
+                last_error_message,
+                bot
+            )
         finally:
             time.sleep(RETRY_TIME)
 
