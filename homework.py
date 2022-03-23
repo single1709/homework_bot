@@ -8,6 +8,8 @@ import telegram
 import requests
 from dotenv import load_dotenv
 
+from exceptions import NoMessageError, WithMessageError
+
 load_dotenv()
 
 TELEGRAM_TOKEN = '5246909891:AAGJ3YOJffZqDoV7x6jDNA6Fk04jRXPpe8Y'
@@ -23,18 +25,6 @@ HOMEWORK_CHECK_RESULTS = {
     'reviewing': 'Работа взята на проверку ревьюером.',
     'rejected': 'Работа проверена: у ревьюера есть замечания.'
 }
-
-
-class NoMessageError(Exception):
-    """Отправка исключений в лог."""
-
-    pass
-
-
-class WithMessageError(Exception):
-    """Отправка исключений в лог и в чат."""
-
-    pass
 
 
 def send_message(bot, message):
@@ -89,14 +79,6 @@ def check_tokens():
     return all([PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID])
 
 
-def check_need_send_message(message, last_error_message, bot):
-    """Проверяет нужно ли отправлять сообщение об ошибке."""
-    if last_error_message != message:
-        last_error_message = message
-        send_message(bot, message)
-    return last_error_message
-
-
 def main():
     """Основная логика работы бота.
 
@@ -125,22 +107,11 @@ def main():
             message = 'Отсутствуют в ответе новые статусы'
             logger.debug(message)
         except WithMessageError():
-            message = 'Ошибка доступа к данным'
+            message = 'Сбой в работе программы'
             logger.error(message)
-            send_message(bot, message)
-            last_error_message = check_need_send_message(
-                message,
-                last_error_message,
-                bot
-            )
-        except Exception as error:
-            message = f'Сбой в работе программы: {error}'
-            logger.error(message)
-            last_error_message = check_need_send_message(
-                message,
-                last_error_message,
-                bot
-            )
+            if last_error_message != message:
+                last_error_message = message
+                send_message(bot, message)
         finally:
             time.sleep(RETRY_TIME)
 
