@@ -8,7 +8,7 @@ import telegram
 import requests
 from dotenv import load_dotenv
 
-from exceptions import NoMessageError, NoMessageDebug, WithMessageError
+from exceptions import NoMessageError, NoMessageDebug
 
 load_dotenv()
 
@@ -43,10 +43,10 @@ def get_api_answer(current_timestamp):
 
         response = requests.get(ENDPOINT, headers=HEADERS, params=params)
         if response.status_code != HTTPStatus.OK:
-            raise WithMessageError()
+            raise requests.RequestException
         return response.json()
     except Exception:
-        raise WithMessageError()
+        raise
 
 
 def check_response(response):
@@ -55,9 +55,9 @@ def check_response(response):
         raise TypeError()
     if (response.get('homeworks') is None
        or response.get('current_date') is None):
-        raise WithMessageError()
+        raise KeyError
     if not isinstance(response.get('homeworks'), list):
-        raise WithMessageError()
+        raise TypeError
     if not response.get('homeworks'):
         raise NoMessageDebug()
     return response.get('homeworks')
@@ -75,7 +75,7 @@ def parse_status(homework):
     try:
         verdict = HOMEWORK_CHECK_RESULTS[homework_status]
     except KeyError:
-        raise KeyError  # тесты не дают raise своего исключения в этом методе
+        raise KeyError
     message = 'Изменился статус проверки работы'
     return f'{message} "{homework_name}". {verdict}'
 
@@ -115,10 +115,8 @@ def main():
         except NoMessageError():
             message = 'API Telegram не отвечает'
             logger.error(message)
-        except KeyError:
-            raise WithMessageError()
-        except WithMessageError():
-            message = 'Сбой в работе программы'
+        except Exception as error:
+            message = f'Сбой в работе программы: {error}'
             logger.error(message)
             if last_error_message != message:
                 last_error_message = message

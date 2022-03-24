@@ -13,12 +13,3 @@ class NoMessageDebug(Exception):
     уровень Debug.
     """
     pass
-
-
-class WithMessageError(Exception):
-    """Отправка исключений в лог и в чат.
-
-    уровень Error.
-    """
-
-    pass
