@@ -8,7 +8,7 @@ import telegram
 import requests
 from dotenv import load_dotenv
 
-from exceptions import NoMessageError, WithMessageError
+from exceptions import NoMessageError, NoMessageDebug, WithMessageError
 
 load_dotenv()
 
@@ -29,18 +29,24 @@ HOMEWORK_CHECK_RESULTS = {
 
 def send_message(bot, message):
     """Отправка сообщения в телеграмм."""
-    bot.send_message(TELEGRAM_CHAT_ID, message)
+    try:
+        bot.send_message(TELEGRAM_CHAT_ID, message)
+    except Exception:
+        raise NoMessageError()
 
 
 def get_api_answer(current_timestamp):
     """Получает ответ от API сервиса Практикум.Домашка."""
-    timestamp = current_timestamp or int(time.time())
-    params = {'from_date': timestamp}
+    try:
+        timestamp = current_timestamp or int(time.time())
+        params = {'from_date': timestamp}
 
-    response = requests.get(ENDPOINT, headers=HEADERS, params=params)
-    if response.status_code != HTTPStatus.OK:
+        response = requests.get(ENDPOINT, headers=HEADERS, params=params)
+        if response.status_code != HTTPStatus.OK:
+            raise WithMessageError()
+        return response.json()
+    except Exception:
         raise WithMessageError()
-    return response.json()
 
 
 def check_response(response):
@@ -53,7 +59,7 @@ def check_response(response):
     if not isinstance(response.get('homeworks'), list):
         raise WithMessageError()
     if not response.get('homeworks'):
-        raise NoMessageError()
+        raise NoMessageDebug()
     return response.get('homeworks')
 
 
@@ -66,10 +72,10 @@ def parse_status(homework):
     homework_name = homework.get('homework_name')
     homework_status = homework.get('status')
 
-    if homework_status not in HOMEWORK_CHECK_RESULTS:
-        raise KeyError
-
-    verdict = HOMEWORK_CHECK_RESULTS[homework_status]
+    try:
+        verdict = HOMEWORK_CHECK_RESULTS[homework_status]
+    except KeyError:
+        raise WithMessageError()  # тесты не дают raise своего исключения в этом методе
     message = 'Изменился статус проверки работы'
     return f'{message} "{homework_name}". {verdict}'
 
@@ -103,9 +109,14 @@ def main():
             send_message(bot, message)
             logger.info(message)
             current_timestamp = response['current_date']
-        except NoMessageError():
+        except NoMessageDebug():
             message = 'Отсутствуют в ответе новые статусы'
             logger.debug(message)
+        except NoMessageError():
+            message = 'API Telegram не отвечает'
+            logger.error(message)
+        except KeyError:
+            raise WithMessageError()
         except WithMessageError():
             message = 'Сбой в работе программы'
             logger.error(message)
