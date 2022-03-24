@@ -75,7 +75,7 @@ def parse_status(homework):
     try:
         verdict = HOMEWORK_CHECK_RESULTS[homework_status]
     except KeyError:
-        raise WithMessageError()  # тесты не дают raise своего исключения в этом методе
+        raise KeyError  # тесты не дают raise своего исключения в этом методе
     message = 'Изменился статус проверки работы'
     return f'{message} "{homework_name}". {verdict}'
 
